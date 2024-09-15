@@ -1,5 +1,5 @@
 {
-  "name": "geektrust",
+  "name": "geektrust-backend-metro-card",
   "version": "1.0.0",
   "description": "geektrust-project",
   "main": "geektrust.js",
@@ -10,7 +10,7 @@
     "dev": "nodemon --exec ts-node src/geektrust.ts sample_input/input1.txt",
     "test": "mocha"
   },
-  "author": "geektrust",
+  "author": "Yash Tibrewal",
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^4.3.19",
