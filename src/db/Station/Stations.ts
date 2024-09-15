@@ -1,6 +1,3 @@
-// There are only two types of station since the code only handles 2 stations.
-
-import { STATIONS } from "../constants";
 
 
 
@@ -10,7 +7,10 @@ import { STATIONS } from "../constants";
  * @returns 
  */
 
-function getDestinationStation(from_station: string) {
+import { STATIONS } from "../../constants";
+import StationAnalytics from "./StationAnalytics";
+
+export default function getDestinationStation(from_station: string) {
 
   switch (from_station) {
 
@@ -23,8 +23,4 @@ function getDestinationStation(from_station: string) {
 
   }
 
-}
-
-export {
-  getDestinationStation
 }

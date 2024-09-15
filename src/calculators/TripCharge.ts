@@ -1,5 +1,10 @@
 import { getCharges } from "./BaseCharges";
 
+export type JourneyCharge = {
+  expected_amount: number;
+  discount_applied: number;
+}
+
 class TripChargeCalculator {
 
   private static RETURN_JOURNEY_DISCOUNT = 0.5;
@@ -24,14 +29,19 @@ class TripChargeCalculator {
    * @param isReturnJourney 
    * @returns 
    */
-  static getJourneyCharge(passenger_type: string, isReturnJourney: boolean): number {
+  static getJourneyCharge(passenger_type: string, isReturnJourney: boolean): JourneyCharge {
+
+    const result = { expected_amount: 0, discount_applied: 0 };
+    result.expected_amount = getCharges(passenger_type);
+    result.discount_applied = 0;
 
     if (isReturnJourney) {
-      return this.getReturnJourneyCharge(passenger_type);
-    } else {
-      return getCharges(passenger_type);
+      const old_expected_amount = result.expected_amount;
+      result.expected_amount = this.getReturnJourneyCharge(passenger_type);
+      result.discount_applied = old_expected_amount - result.expected_amount;
     }
 
+    return result;
   }
 
 }

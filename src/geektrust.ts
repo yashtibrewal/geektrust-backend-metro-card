@@ -1,6 +1,5 @@
 import fs from 'fs';
 import handleInputCommand from './handlers';
-import CardTransactionHandler from './db/CardTransactionHandler';
 
 const filename = process.argv[2]
 
@@ -12,7 +11,5 @@ fs.readFile(filename, "utf8", (err: NodeJS.ErrnoException | null, data: string) 
     for (const line of inputLines) {
         handleInputCommand(line)
     }
-
-    // console.log(CardTransactionHandler.getInstance().printDev())
 
 });

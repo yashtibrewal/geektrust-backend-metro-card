@@ -34,6 +34,8 @@ function handleInputCommand(inputLine: string): void {
   } catch (err: Error | unknown) {
     if (err instanceof Error)
       console.log(err.message);
+    else
+      console.log(err);
   }
 
 }
