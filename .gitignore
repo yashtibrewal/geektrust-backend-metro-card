@@ -1,2 +1,6 @@
 node_modules
 dist
+
+// This will be the output file for the geektrust code.
+
+geektrust.js
