@@ -1,8 +1,8 @@
-// This fille will handle the journey data.
-
 import getDestinationStation from "./Station/Stations";
 
-
+/**
+ * Class representing a passenger's check-in information.
+ */
 class CheckIn {
 
   private _passenger_type: string | undefined;
@@ -32,16 +32,22 @@ class CheckIn {
     this._discounted = value;
   }
 
+  /**
+   * Constructs a new check-in instance with passenger type, origin station, and discount status.
+   * @param passenger_type The type of passenger.
+   * @param from_station The station from which the passenger starts the journey.
+   * @param isDiscounted Whether the journey is discounted (return journey).
+   */
   constructor(passenger_type: string, from_station: string, isDiscounted: boolean) {
     this.passenger_type = passenger_type;
     this.from_station = from_station;
-    // by default its not a discount
-    this.discounted = isDiscounted;
+    this.discounted = isDiscounted; // By default, the journey is not discounted
   }
-
 }
 
-
+/**
+ * Class responsible for handling the journey operations for passengers.
+ */
 export default class JourneyHandler {
 
   private passengerJournies = new Map<string, CheckIn[]>();
@@ -49,53 +55,52 @@ export default class JourneyHandler {
 
   private constructor() { }
 
+  /**
+   * Returns the singleton instance of JourneyHandler.
+   * @returns The singleton instance.
+   */
   public static getInstance(): JourneyHandler {
     return JourneyHandler.instance;
   }
 
   /**
-   * 
-   * @param metro_card 
-   * @param passenger_type 
-   * @param from_station 
+   * Registers a check-in for a passenger.
+   * @param metro_card The ID of the metro card.
+   * @param passenger_type The type of passenger.
+   * @param from_station The station the passenger is traveling from.
+   * @param isDiscounted Whether the journey is discounted.
    */
   checkInPassenger(metro_card: string, passenger_type: string, from_station: string, isDiscounted: boolean): void {
-
     const checkIn = new CheckIn(passenger_type, from_station, isDiscounted);
-
     let journies = this.passengerJournies.get(metro_card);
 
     if (journies === undefined) {
       journies = [];
     }
 
-    journies!.push(checkIn);
-
-    this.passengerJournies.set(metro_card, journies!);
-
+    journies.push(checkIn);
+    this.passengerJournies.set(metro_card, journies);
   }
 
   /**
-   * @param metro_card 
-   * @param from_station 
+   * Checks if the current journey is a return journey based on previous journey data.
+   * @param metro_card The ID of the metro card.
+   * @param from_station The station from which the passenger is starting the new journey.
+   * @returns True if the current journey is a return journey, otherwise false.
    */
   isReturnJourney(metro_card: string, from_station: string): boolean {
-
-    // Logic for return station
-    // Check if the previous journey is not discounted and the destination station is the from station
-
     const journies = this.passengerJournies.get(metro_card);
-    // console.info(journies);
     let isDiscountedJourney = false;
 
     if (journies && journies.length > 0) {
-      const journey = journies[journies.length - 1]; // getting the previous journey
-      if (!journey.discounted && getDestinationStation(from_station) == journey.from_station) {
+      const lastJourney = journies[journies.length - 1]; // Get the last journey (previous journey)
+      
+      // If the previous journey was not discounted and the destination station is the current station
+      if (!lastJourney.discounted && getDestinationStation(from_station) === lastJourney.from_station) {
         isDiscountedJourney = true;
       }
     }
 
     return isDiscountedJourney;
   }
-
 }
