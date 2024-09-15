@@ -10,6 +10,8 @@ import CardTransactionHandler from "../db/CardTransactionHandler";
  */
 export default function handleBalance(arr: string[] | undefined) {
 
+  // console.info('handleBalance');
+
   const transactionHandler = CardTransactionHandler.getInstance();
 
   if (arr == undefined || arr[0] == undefined || arr[1] == undefined) {

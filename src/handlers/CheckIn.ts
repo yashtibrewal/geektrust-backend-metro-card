@@ -8,16 +8,19 @@ import JourneyHandler from "../db/Journey";
 import Passenger from "../db/Passenger";
 import StationAnalytics, { AirportStationAnalytics, CentralStationAnalytics } from "../db/Station/StationAnalytics";
 
-function collectAmountAndRechargeCard(metro_card: string, trip_charges: JourneyCharge, from_station: string) {
+function rechargeCard(metro_card: string, trip_charges: JourneyCharge, from_station: string) {
   // collect money from passenger including service charge
   const balance = CardTransactionHandler.getInstance().getBalance(metro_card);
   const required_additional_amount = trip_charges.expected_amount - balance;
 
   const service_charge = ServiceChargeCalculator.calculateServiceCharge(required_additional_amount);
+
   Passenger.getInstance(metro_card).collectAmount(required_additional_amount + service_charge);
+  logAmount(service_charge, 0, from_station)
+
+
   CardTransactionHandler.getInstance().rechargeCard(metro_card, required_additional_amount);
 
-  logAmount(required_additional_amount, service_charge, trip_charges, from_station)
 }
 
 /**
@@ -28,17 +31,17 @@ function collectAmountAndRechargeCard(metro_card: string, trip_charges: JourneyC
  * @param from_station 
  */
 function logAmount(
-  required_additional_amount: number, service_charge: number, trip_charges: JourneyCharge, from_station: string) {
+  collection_amount: number, discount: number, from_station: string) {
 
   // Add records to analytics
   switch (from_station) {
     case STATIONS.AIRPORT:
-      AirportStationAnalytics.getInstance().logCollectionAmount(required_additional_amount + service_charge);
-      AirportStationAnalytics.getInstance().logDiscountAmount(trip_charges.discount_applied);
+      AirportStationAnalytics.getInstance().logCollectionAmount(collection_amount);
+      AirportStationAnalytics.getInstance().logDiscountAmount(discount);
       break;
     case STATIONS.CENTRAL:
-      CentralStationAnalytics.getInstance().logCollectionAmount(required_additional_amount + service_charge);
-      CentralStationAnalytics.getInstance().logDiscountAmount(trip_charges.discount_applied);
+      CentralStationAnalytics.getInstance().logCollectionAmount(collection_amount);
+      CentralStationAnalytics.getInstance().logDiscountAmount(discount);
       break;
   }
 
@@ -76,6 +79,7 @@ function resolvePassengerTypeandLog(passenger_type: string, instance: StationAna
 
 export default function handleCheckIn(arr: string[] | undefined) {
 
+  // console.info('handleCheckIn');
 
   const [metro_card, passenger_type, from_station] = arr || [];
 
@@ -86,6 +90,7 @@ export default function handleCheckIn(arr: string[] | undefined) {
   // Calculating expected balance for the trip.
 
   const isReturnJourney = JourneyHandler.getInstance().isReturnJourney(metro_card, from_station);
+  // console.info(isReturnJourney);
   const trip_charges = TripChargeCalculator.getJourneyCharge(passenger_type, isReturnJourney);;
   const expected_trip_cost = trip_charges.expected_amount;
 
@@ -94,14 +99,18 @@ export default function handleCheckIn(arr: string[] | undefined) {
   const hasSufficientBalance = CardTransactionHandler.getInstance().hasSufficientBalance(metro_card, expected_trip_cost);
 
 
-  // Handling amount collection from passenger
+  // Handling recharging the card.
   if (!hasSufficientBalance) {
-    collectAmountAndRechargeCard(metro_card, trip_charges, from_station);
-    logPassenger(from_station, passenger_type);
+    rechargeCard(metro_card, trip_charges, from_station);
   }
 
   CardTransactionHandler.getInstance().chargeCard(metro_card, expected_trip_cost);
-  JourneyHandler.getInstance().checkInPassenger(metro_card, passenger_type, from_station);
+  logAmount(expected_trip_cost, trip_charges.discount_applied, from_station)
 
+  JourneyHandler.getInstance().checkInPassenger(metro_card, passenger_type, from_station, isReturnJourney);
+
+  logPassenger(from_station, passenger_type);
+
+  // console.info(AirportStationAnalytics.getInstance().getTotalCollection());
 
 }

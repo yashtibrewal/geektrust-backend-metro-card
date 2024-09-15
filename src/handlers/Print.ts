@@ -28,12 +28,23 @@ function getStationCollectionStats(instance: StationAnalytics, station: STATIONS
 
 }
 
+/**
+ * 
+ * @param arr 
+ * @returns 
+ */
 function createPassengetTypeEntry(arr: [PASSENGER_TYPE, number]) {
 
   return `${arr[0]} ${arr[1]}`;
 
 }
 
+/**
+ * 
+ * @param instance 
+ * @param station 
+ * @returns 
+ */
 function generateStationPassengerStats(instance: StationAnalytics, station: STATIONS): string {
 
 
@@ -58,7 +69,15 @@ function generateStationPassengerStats(instance: StationAnalytics, station: STAT
   const second = passenger_summary_array[1];
   const last = passenger_summary_array[passenger_summary_array.length - 1];
 
-  const stats = ['PASSENGER_TYPE_SUMMARY', createPassengetTypeEntry(top), createPassengetTypeEntry(second), createPassengetTypeEntry(last)].join('\n');
+  const generatePatientPassengerStats = [
+    top, second, last]
+    .filter(item => item[1] > 0)
+    .map(item => createPassengetTypeEntry(item));
+
+  const stats = [
+    'PASSENGER_TYPE_SUMMARY',
+    ...generatePatientPassengerStats
+  ].join('\n');
 
 
   return stats;
@@ -68,7 +87,7 @@ function generateStationPassengerStats(instance: StationAnalytics, station: STAT
  * 
  * @param arr 
  */
-export default function handlePrintSummary(arr: string[] | undefined) {
+export default function handlePrintSummary() {
 
 
   const airportCollectionStats = getStationCollectionStats(AirportStationAnalytics.getInstance(), STATIONS.AIRPORT);

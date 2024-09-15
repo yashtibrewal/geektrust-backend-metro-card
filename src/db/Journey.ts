@@ -32,11 +32,11 @@ class CheckIn {
     this._discounted = value;
   }
 
-  constructor(passenger_type: string, from_station: string) {
+  constructor(passenger_type: string, from_station: string, isDiscounted: boolean) {
     this.passenger_type = passenger_type;
     this.from_station = from_station;
     // by default its not a discount
-    this.discounted = false;
+    this.discounted = isDiscounted;
   }
 
 }
@@ -59,9 +59,9 @@ export default class JourneyHandler {
    * @param passenger_type 
    * @param from_station 
    */
-  checkInPassenger(metro_card: string, passenger_type: string, from_station: string): void {
+  checkInPassenger(metro_card: string, passenger_type: string, from_station: string, isDiscounted: boolean): void {
 
-    const checkIn = new CheckIn(passenger_type, from_station);
+    const checkIn = new CheckIn(passenger_type, from_station, isDiscounted);
 
     let journies = this.passengerJournies.get(metro_card);
 
@@ -70,6 +70,8 @@ export default class JourneyHandler {
     }
 
     journies!.push(checkIn);
+
+    this.passengerJournies.set(metro_card, journies!);
 
   }
 
@@ -83,11 +85,12 @@ export default class JourneyHandler {
     // Check if the previous journey is not discounted and the destination station is the from station
 
     const journies = this.passengerJournies.get(metro_card);
+    // console.info(journies);
     let isDiscountedJourney = false;
 
-    if(journies && journies.length>1){
-      const journey = journies[journies.length-1];
-      if(journey.discounted && getDestinationStation(from_station) == journey.from_station){
+    if (journies && journies.length > 0) {
+      const journey = journies[journies.length - 1]; // getting the previous journey
+      if (!journey.discounted && getDestinationStation(from_station) == journey.from_station) {
         isDiscountedJourney = true;
       }
     }

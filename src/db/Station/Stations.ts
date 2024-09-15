@@ -8,7 +8,6 @@
  */
 
 import { STATIONS } from "../../constants";
-import StationAnalytics from "./StationAnalytics";
 
 export default function getDestinationStation(from_station: string) {
 

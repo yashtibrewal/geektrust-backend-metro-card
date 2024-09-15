@@ -9,7 +9,6 @@ function handleInputCommand(inputLine: string): void {
 
   const inputWords: string[] = inputLine.split(" ");
   try {
-
     switch (inputWords[0]) {
 
       case INPUT_COMMANDS.BALANCE:
@@ -24,7 +23,7 @@ function handleInputCommand(inputLine: string): void {
 
       case INPUT_COMMANDS.PRINT_SUMMARY:
         inputWords.shift();
-        handlePrintSummary(inputWords);
+        handlePrintSummary();
         break;
 
       default:

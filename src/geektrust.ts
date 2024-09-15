@@ -9,6 +9,7 @@ fs.readFile(filename, "utf8", (err: NodeJS.ErrnoException | null, data: string) 
     // Add your code here to process input commands
 
     for (const line of inputLines) {
+        // console.log(line);
         handleInputCommand(line)
     }
 

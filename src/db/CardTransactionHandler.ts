@@ -12,10 +12,6 @@ export default class CardTransactionHandler {
     return CardTransactionHandler.instance;
   }
 
-  public printDev() {
-    console.log(this.balanceMap);
-  }
-
   rechargeCard(metro_card: string, amount: number): void {
 
     const balance = this.balanceMap.get(metro_card);
