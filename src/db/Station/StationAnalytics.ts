@@ -73,6 +73,13 @@ export class AirportStationAnalytics extends StationAnalytics {
   private static _instance = new AirportStationAnalytics();
 
   /**
+   * NOTE: THIS FUNCTION IS PURELY FOR TESTING PURPOSE.
+   */
+  public static resetState() {
+    AirportStationAnalytics._instance = new AirportStationAnalytics();
+  }
+
+  /**
    * Returns the singleton instance of AirportStationAnalytics.
    * @returns The singleton instance.
    */
@@ -91,6 +98,14 @@ export class AirportStationAnalytics extends StationAnalytics {
 export class CentralStationAnalytics extends StationAnalytics {
 
   private static _instance = new CentralStationAnalytics();
+
+
+  /**
+   * NOTE: THIS FUNCTION IS PURELY FOR TESTING PURPOSE.
+   */
+  public static resetState() {
+    CentralStationAnalytics._instance = new CentralStationAnalytics();
+  }
 
   /**
    * Returns the singleton instance of CentralStationAnalytics.
